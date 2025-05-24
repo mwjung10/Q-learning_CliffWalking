@@ -1,12 +1,10 @@
 import gymnasium as gym
 from q_algorithm import QLearningAgent
-import matplotlib.pyplot as plt
-
 import pandas as pd
 from tabulate import tabulate
 
 
-def average_experiments():
+def average_experiments(exp_prob=0.1):
     env = gym.make("CliffWalking-v0", render_mode="ansi")
     agent = QLearningAgent(env)
 
@@ -25,8 +23,11 @@ def average_experiments():
 
             for _ in range(n_runs):
                 env = gym.make("CliffWalking-v0")
-                agent = QLearningAgent(env,
-                                     learning_rate=lr)
+                agent = QLearningAgent(
+                    env,
+                    learning_rate=lr,
+                    exploration_prob=exp_prob
+                )
 
                 metrics = agent.train(max_episodes=episodes)
                 avg_success += metrics["success_rate"]
@@ -60,5 +61,7 @@ if __name__ == "__main__":
     env = gym.make("CliffWalking-v0", render_mode="ansi")
     observation, info = env.reset()
 
-    average_experiments()
-
+    exploration_prob = [0.01, 0.05, 0.1, 0.5]
+    for prob in exploration_prob:
+        print(f"\nExploration Probability: {prob}")
+        average_experiments(exp_prob=prob)

@@ -9,7 +9,8 @@ logging.disable(logging.INFO)
 
 
 class QLearningAgent:
-    def __init__(self, env, learning_rate=0.1, discount_factor=0.99, exploration_prob=0.1):
+    def __init__(self, env, learning_rate=0.1, discount_factor=0.99,
+                 exploration_prob=0.1):
         self.env = env
         self.learning_rate = learning_rate
         self.discount_factor = discount_factor
@@ -18,8 +19,8 @@ class QLearningAgent:
 
         # for checking the accuracy
         self.success_rate = 0  # meaure how much the agent is successful
-        self.rewards_last_10 = []  # store the last 10 rewards to check the performance
-        self.cliff_fail_rate = 0  # measure how much the agent fails to reach the goal
+        self.rewards_last_10 = []  # store the last 10 rewards
+        self.cliff_fail_rate = 0  # measure how much the agent fails
         self.avg_step_count = 0  # average number of steps to reach the goal
 
     def _choose_action(self, state):
@@ -39,12 +40,14 @@ class QLearningAgent:
 
             while not done:
                 action = self._choose_action(state)
-                next_state, reward, terminated, truncated, info = self.env.step(action)
+                next_state, reward, terminated, truncated, _ = self.env.step(
+                    action)
                 done = terminated or truncated
                 total_reward += reward
 
                 best_next_action = np.argmax(self.q_table[next_state])
-                td_target = reward + self.discount_factor * self.q_table[next_state, best_next_action]
+                td_target = reward + self.discount_factor * self.q_table[
+                    next_state, best_next_action]
                 td_error = td_target - self.q_table[state, action]
                 self.q_table[state, action] += self.learning_rate * td_error
                 state = next_state
@@ -53,8 +56,8 @@ class QLearningAgent:
             steps_array.append(steps)
 
             if episode % 100 == 0:
-                logging.info(f"Episode: {episode}, Reward: {total_reward}, Exploration: {self.exploration_prob:.3f}")
-
+                logging.info(f"Episode: {episode}, Reward: {total_reward}, \
+                             Exploration: {self.exploration_prob:.3f}")
 
             # Update success rate, cliff fail rate, and average step count
             if total_reward >= -100:
@@ -72,6 +75,6 @@ class QLearningAgent:
             "success_rate": self.success_rate,
             "cliff_fail_rate": self.cliff_fail_rate,
             "avg_step_count": self.avg_step_count,
-            "rewards_last_10": np.mean(self.rewards_last_10) if self.rewards_last_10 else 0
+            "rewards_last_10": (np.mean(self.rewards_last_10) if
+                                self.rewards_last_10 else 0)
         }
-
