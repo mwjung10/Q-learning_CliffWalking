@@ -30,7 +30,6 @@ class QLearningAgent:
             return np.argmax(self.q_table[state])
 
     def train(self, max_episodes=100):
-
         steps_array = []
         for episode in range(max_episodes):
             state, _ = self.env.reset()
