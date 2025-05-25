@@ -77,3 +77,24 @@ class QLearningAgent:
             "rewards_last_10": (np.mean(self.rewards_last_10) if
                                 self.rewards_last_10 else 0)
         }
+
+    def solve(self, render=False):
+        state, _ = self.env.reset()
+        done = False
+        total_reward = 0
+        steps = 0
+
+        while not done:
+            action = np.argmax(self.q_table[state])
+            next_state, reward, terminated, truncated, _ = self.env.step(
+                action)
+            done = terminated or truncated
+            state = next_state
+            total_reward += reward
+            steps += 1
+
+            if render:
+                print(self.env.render())
+
+        print(f"Total reward: {total_reward}, Steps: {steps}")
+        return total_reward, steps

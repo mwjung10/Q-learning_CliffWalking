@@ -61,7 +61,13 @@ if __name__ == "__main__":
     env = gym.make("CliffWalking-v0", render_mode="ansi")
     observation, info = env.reset()
 
-    exploration_prob = [0.01, 0.05, 0.1, 0.5]
-    for prob in exploration_prob:
-        print(f"\nExploration Probability: {prob}")
-        average_experiments(exp_prob=prob)
+    # exploration_prob = [0.01, 0.05, 0.1, 0.5]
+    # for prob in exploration_prob:
+    #     print(f"\nExploration Probability: {prob}")
+    #     average_experiments(exp_prob=prob)
+
+    agent = QLearningAgent(env, learning_rate=1, exploration_prob=0.01)
+    agent.train(max_episodes=500)
+
+    print("\nTesting the trained agent...\n")
+    agent.solve(render=True)
